@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Welcome to {{request.session.user_first_name}}'s Page!</h1>
+    <h4>Welcome, {{request.session.user_first_name}}</h4>
+    <a href='/wall/logout'>Log Out</a>
+    {% for message in messages %}
+    {{message}}
+    {% endfor %}
+
+    <form action='/wall/message' method='POST'>
+    {% csrf_token %} 
+    <textarea name='message'></textarea><br>
+    <input type='submit' value='Post Message'>
+    </form>
+    
+    {% for message in all_messages %}
+    {% if request.session.user_id == message.creator.id %}
+    <a href='/wall/{{message.id}}/edit'>Update Message</a>
+    {% endif %}
+    {{message.content}}<br>
+    {% for comment in message.comments.all %}
+    {{comment.content}}<br>
+    <a href='/wall/{{comment.id}}/delete'>Delete Comment</a>
+        
+    {% endfor %}
+    
+    <form action= '/wall/{{message.id}}/comment' method='POST'>
+        {% csrf_token %} 
+        Comment: <textarea name='comment'></textarea><br>
+        <input type='submit' value='Post Comment'>
+    </form>
+    
+
+
+
+
+    {% endfor %}
+
+</body>
+</html>
